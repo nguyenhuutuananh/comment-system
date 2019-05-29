@@ -18,46 +18,76 @@
           </span>
           <span class="time">{{comment.created_at}}</span>
         </div>
+        <comment-box :post-id="postId"></comment-box>
         <template v-if="subComments && subComments.length > 0">
           <comment-item
             :key="index"
             :comment="item"
             :sub-comments="item.comments"
             v-for="(item, index) in subComments"
+            :post-id="postId"
           ></comment-item>
         </template>
       </div>
-      <!-- <ul class="comments-list">
-        <li class="comment">
-          <a class="pull-left" href="#">
-            <img class="avatar" src="http://bootdey.com/img/Content/user_3.jpg" alt="avatar">
-          </a>
-          <div class="comment-body">
-            <div class="comment-heading">
-              <h4 class="user">Ryan Haywood</h4>
-              <h5 class="time">3 minutes ago</h5>
-            </div>
-            <p>Relax my friend</p>
-          </div>
-        </li>
-        <li class="comment">
-          <a class="pull-left" href="#">
-            <img class="avatar" src="http://bootdey.com/img/Content/user_2.jpg" alt="avatar">
-          </a>
-          <div class="comment-body">
-            <div class="comment-heading">
-              <h4 class="user">Gavino Free</h4>
-              <h5 class="time">3 minutes ago</h5>
-            </div>
-            <p>Ok, cool.</p>
-          </div>
-        </li>
-      </ul>-->
     </li>
   </ul>
 </template>
 <script>
 export default {
-  props: ["comment", "subComments"]
+  props: ["comment", "subComments", "postId"]
 };
 </script>
+
+<style lang="scss" scoped>
+.comments-list {
+    padding: 0;
+    margin-top: 20px;
+    list-style-type: none;
+    .comment {
+        display: flex;
+        width: 100%;
+        margin: 20px 0;
+        .avatar {
+            width: 35px;
+            height: 35px;
+        }
+        .comment-heading {
+            display: block;
+            width: 100%;
+            .user {
+                font-size: 14px;
+                font-weight: bold;
+                display: inline;
+                margin-top: 0;
+                margin-right: 10px;
+            }
+        }
+        .comment-body {
+            margin-left: 10px;
+            width: 90%;
+            p {
+                overflow-wrap: break-word;
+                width: 100%;
+            }
+            .action-links {
+                &__like, &__reply {
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                    cursor: pointer;
+                }
+                .time {
+                    font-size: 12px;
+                    color: #aaa;
+                    margin-top: 0;
+                    display: inline;
+                }
+            }
+        }
+        > .comments-list {
+            margin-left: 50px;
+        }
+    }
+}
+
+</style>

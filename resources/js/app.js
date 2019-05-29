@@ -20,6 +20,7 @@ window.Vue = require('vue');
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 
 // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+Vue.component('comment-box', require('./components/comments/CommentBoxComponent.vue').default);
 Vue.component('comment-item', require('./components/comments/CommentItemComponent.vue').default);
 Vue.component('comment-list', require('./components/comments/CommentListComponent.vue').default);
 
