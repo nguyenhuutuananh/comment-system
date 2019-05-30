@@ -1,5 +1,6 @@
 <template>
   <div>
+    <comment-box :post-id="postId"></comment-box>
     <comment-item
       :key="index"
       v-for="(item, index) in comments"
@@ -7,7 +8,6 @@
       :sub-comments="item.comments"
       :post-id="postId"
     ></comment-item>
-    <comment-box :post-id="postId"></comment-box>
   </div>
 </template>
 <script>
@@ -21,7 +21,12 @@ export default {
   mounted() {
     console.log(this.postId);
     axios.get("/comments").then(resp => {
-      this.comments = resp.data.data.reverse();
+      this.comments = resp.data.data
+        .map(comment => {
+          comment.comments = comment.comments.reverse();
+          return comment;
+        })
+        .reverse();
     });
   }
 };

@@ -20,8 +20,8 @@ class CommentController extends Controller
     public function index()
     {
         $comments = Comment::with(['comments' => function ($query) {
-            return $query->with(['comments', 'user']);
-        }, 'user'])->where('parent_comment_id', null)->orderBy('created_at', 'desc')->paginate();
+            return $query->with(['user'])->latest()->skip(0)->take(10);
+        }, 'user'])->where('parent_comment_id', null)->latest()->paginate();
         return response()->json($comments, 200);
     }
 

@@ -17,30 +17,46 @@
 <script lang="ts">
 import Vue from "vue";
 import axios from "axios";
+import _ from "lodash";
 export default Vue.extend({
-  props: ["postId"],
+  props: {
+    postId: {
+      type: Number
+    },
+    parent: {
+      type: Number
+    },
+    lastSubCommentId: {
+      type: Number
+    }
+  },
   data() {
     return {
       message: ""
     };
   },
   methods: {
-    comment: function(event) {
+    comment: _.debounce(function(event) {
+      console.log(event);
       if (this.message.trim() === "") return;
-      console.log(this.message, this.postId);
-      axios
-        .post("/comments", {
-          content: this.message,
-          post_id: this.postId
-        })
-        .then(resp => {
-          console.log(resp);
-          this.comments.push(resp.data);
-        })
-        .finally(() => {
-          this.message = "";
-        });
-    }
+      let params: any = {
+        content: this.message,
+        parent_comment_id: this.parent,
+        post_id: this.postId
+      };
+      if (this.lastSubCommentId) {
+        params.last_seen_comment_id = this.lastSubCommentId;
+      }
+      // axios
+      //   .post("/comments", params)
+      //   .then(resp => {
+      //     console.log(resp);
+      //     this.comments.push(resp.data);
+      //   })
+      //   .finally(() => {
+      //     this.message = "";
+      //   });
+    }, 500)
   }
 });
 </script>

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
-    protected $fillable = ['content', 'user_id', 'reply_to_user_id'];
+    protected $fillable = ['content', 'user_id', 'reply_to_user_id', 'parent_comment_id'];
     /**
      * Get all of the owning commentable models.
      */

@@ -20,6 +20,7 @@ window.Vue = require('vue');
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 
 // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+Vue.component('dynamic-from-now', require('./components/shared/DynamicFromNowComponent.vue').default);
 Vue.component('comment-box', require('./components/comments/CommentBoxComponent.vue').default);
 Vue.component('comment-item', require('./components/comments/CommentItemComponent.vue').default);
 Vue.component('comment-list', require('./components/comments/CommentListComponent.vue').default);
@@ -29,7 +30,33 @@ Vue.component('comment-list', require('./components/comments/CommentListComponen
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
-
 const app = new Vue({
-    el: '#app'
+  el: '#app',
+  created() {
+    this.listeners = 0 // set non-reactive counter
+  },
+  methods: {
+    start() {
+      this.interval = setInterval(this.emit, 10000)
+    },
+    emit() {
+      this.$emit('tick')
+    },
+    register(cb) {
+      if (!cb) return
+      if (this.listeners === 0) {
+        this.start() //start clock
+      }
+      this.listeners++
+      this.$on('tick', cb)
+    },
+    unregister(cb) {
+      if (!cb) return
+      this.listeners--
+      this.$off('tick', cb)
+      if (this.listeners === 0) {
+        clearInterval(this.interval) // turn off clock
+      }
+    }
+  }
 });
