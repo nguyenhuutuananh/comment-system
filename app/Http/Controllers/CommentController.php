@@ -49,7 +49,21 @@ class CommentController extends Controller
         $comment->user()->associate(auth()->user());
         $comment->commentable()->associate($post);
         $comment->save();
-        return response()->json($comment, 200);
+
+        // Return newest comments
+        $query = Comment::latest()->with(['comments' => function ($query) {
+            return $query->with(['user'])->latest()->skip(0)->take(10);
+        }, 'user']);
+        if ($request->last_seen_comment_id) {
+            $query = $query
+                    ->where('id', '>', $request->last_seen_comment_id);
+        }
+        $query = $query
+                    ->where('parent_comment_id', $request->parent_comment_id ?? null);
+        $comments = $query->get();
+        $response['comments'] = $comments;
+        $response['new_comment'] = $comment;
+        return response()->json($response, 200);
     }
 
     /**

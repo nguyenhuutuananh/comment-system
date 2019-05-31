@@ -15,7 +15,7 @@
                     @endif
 
                     You are logged in!
-                    <comment-list post-id="1"></comment-list>
+                    <comment-list :post-id="1"></comment-list>
                 </div>
             </div>
         </div>

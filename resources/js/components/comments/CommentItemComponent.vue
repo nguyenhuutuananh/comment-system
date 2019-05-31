@@ -13,7 +13,7 @@
           <span class="action-links__like">
             <i class="far fa-thumbs-up"></i> Thích
           </span>
-          <span class="action-links__reply">
+          <span class="action-links__reply" @click="showReply">
             <i class="fas fa-reply"></i> Trả lời
           </span>
           <span class="time">
@@ -27,13 +27,17 @@
             :sub-comments="item.comments"
             v-for="(item, index) in subComments"
             :post-id="postId"
+            @onCallParentReply="showReply"
           ></comment-item>
         </template>
         <comment-box
+          v-show="isShowCommentBox"
           v-if="!comment.parent_comment_id"
           :post-id="postId"
           :parent="comment.parent_comment_id || comment.id"
-          :last-sub-comment-id="comment.comments.length > 0 ? comment.comments[0].id : ''"
+          :last-sub-comment-id="last_comment"
+          @onReceiveComments="onReceiveComments"
+          ref="commentBox"
         ></comment-box>
       </div>
     </li>
@@ -42,7 +46,40 @@
 <script>
 export default {
   props: ["comment", "subComments", "postId"],
-  mounted() {}
+  data() {
+    return {
+      last_comment: 0,
+      isShowCommentBox: false,
+    };
+  },
+  mounted() {},
+  created() {
+    this.setLastCommentId();
+  },
+  methods: {
+    showReply (event) {
+      if (this.subComments && this.subComments.length > 0) {
+        this.isShowCommentBox = !this.isShowCommentBox;
+        if (this.isShowCommentBox) {
+          this.$refs.commentBox.focusInput();
+        }
+      } else {
+        this.$emit('onCallParentReply');
+      }
+    },
+    setLastCommentId() {
+      if (this.comment.comments) {
+        this.last_comment = this.comment.comments.length > 0 ? this.comment.comments[this.comment.comments.length-1].id : 0
+      }
+    },
+    onReceiveComments(resp) {
+      if (!this.comment.comments) {
+        this.comment.comments = [];
+      }
+      this.comment.comments = _.concat(this.comment.comments, ...resp.data.comments.reverse());
+      this.setLastCommentId();
+    },
+  }
 };
 </script>
 

@@ -1763,6 +1763,18 @@ module.exports = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+//
+//
+//
+//
 //
 //
 //
@@ -1806,7 +1818,44 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["comment", "subComments", "postId"],
-  mounted: function mounted() {}
+  data: function data() {
+    return {
+      last_comment: 0,
+      isShowCommentBox: false
+    };
+  },
+  mounted: function mounted() {},
+  created: function created() {
+    this.setLastCommentId();
+  },
+  methods: {
+    showReply: function showReply(event) {
+      if (this.subComments && this.subComments.length > 0) {
+        this.isShowCommentBox = !this.isShowCommentBox;
+
+        if (this.isShowCommentBox) {
+          this.$refs.commentBox.focusInput();
+        }
+      } else {
+        this.$emit('onCallParentReply');
+      }
+    },
+    setLastCommentId: function setLastCommentId() {
+      if (this.comment.comments) {
+        this.last_comment = this.comment.comments.length > 0 ? this.comment.comments[this.comment.comments.length - 1].id : 0;
+      }
+    },
+    onReceiveComments: function onReceiveComments(resp) {
+      var _ref;
+
+      if (!this.comment.comments) {
+        this.comment.comments = [];
+      }
+
+      this.comment.comments = (_ref = _).concat.apply(_ref, [this.comment.comments].concat(_toConsumableArray(resp.data.comments.reverse())));
+      this.setLastCommentId();
+    }
+  }
 });
 
 /***/ }),
@@ -1820,6 +1869,18 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+//
+//
+//
+//
 //
 //
 //
@@ -1836,19 +1897,39 @@ __webpack_require__.r(__webpack_exports__);
   props: ["postId"],
   data: function data() {
     return {
-      comments: []
+      comments: [],
+      last_comment: 0
     };
   },
+  created: function created() {},
   mounted: function mounted() {
     var _this = this;
 
-    console.log(this.postId);
     axios.get("/comments").then(function (resp) {
       _this.comments = resp.data.data.map(function (comment) {
         comment.comments = comment.comments.reverse();
         return comment;
       }).reverse();
+
+      _this.setLastCommentId();
     });
+  },
+  methods: {
+    setLastCommentId: function setLastCommentId() {
+      if (this.comments) {
+        this.last_comment = this.comments.length > 0 ? this.comments[this.comments.length - 1].id : 0;
+      }
+    },
+    onReceiveComments: function onReceiveComments(resp) {
+      var _ref;
+
+      if (!this.comments) {
+        this.comments = [];
+      }
+
+      this.comments = (_ref = _).concat.apply(_ref, [this.comments].concat(_toConsumableArray(resp.data.comments.reverse())));
+      this.setLastCommentId();
+    }
   }
 });
 
@@ -55483,9 +55564,81 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
   !*** ./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/comments/CommentBoxComponent.vue?vue&type=script&lang=ts& ***!
   \*********************************************************************************************************************************************/
 /*! exports provided: default */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-throw new Error("Module parse failed: Unexpected token (42:16)\nYou may need an appropriate loader to handle this file type.\n|       console.log(event);\n|       if (this.message.trim() === \"\") return;\n>       let params: any = {\n|         content: this.message,\n|         parent_comment_id: this.parent,");
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_2__);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = (vue__WEBPACK_IMPORTED_MODULE_0___default.a.extend({
+  props: {
+    postId: {
+      type: Number
+    },
+    parent: {
+      type: Number
+    },
+    lastSubCommentId: {
+      type: Number,
+    }
+  },
+  data() {
+    return {
+      message: ""
+    };
+  },
+  methods: {
+    focusInput() {
+      console.log(this.$refs.commentInput);
+      setTimeout(_ => this.$refs.commentInput.focus());
+    },
+    comment: lodash__WEBPACK_IMPORTED_MODULE_2___default.a.debounce(function(event) {
+      if (this.message.trim() === "") return;
+      let params = {
+        content: this.message,
+        parent_comment_id: this.parent,
+        post_id: this.postId
+      };
+      if (this.lastSubCommentId) {
+        params.last_seen_comment_id = this.lastSubCommentId;
+      }
+      axios__WEBPACK_IMPORTED_MODULE_1___default.a
+        .post("/comments", params)
+        .then(resp => {
+          this.$emit('onReceiveComments', resp);
+        })
+        .finally(() => {
+          this.message = "";
+        });
+    }, 500)
+  }
+}));
+
 
 /***/ }),
 
@@ -55514,6 +55667,7 @@ var render = function() {
           expression: "message"
         }
       ],
+      ref: "commentInput",
       staticClass: "form-control",
       attrs: { placeholder: "Add a comment", type: "text" },
       domProps: { value: _vm.message },
@@ -55583,7 +55737,17 @@ var render = function() {
           _c("div", { staticClass: "action-links" }, [
             _vm._m(1),
             _vm._v(" "),
-            _vm._m(2),
+            _c(
+              "span",
+              {
+                staticClass: "action-links__reply",
+                on: { click: _vm.showReply }
+              },
+              [
+                _c("i", { staticClass: "fas fa-reply" }),
+                _vm._v(" Trả lời\n        ")
+              ]
+            ),
             _vm._v(" "),
             _c(
               "span",
@@ -55609,21 +55773,29 @@ var render = function() {
                     comment: item,
                     "sub-comments": item.comments,
                     "post-id": _vm.postId
-                  }
+                  },
+                  on: { onCallParentReply: _vm.showReply }
                 })
               })
             : _vm._e(),
           _vm._v(" "),
           !_vm.comment.parent_comment_id
             ? _c("comment-box", {
+                directives: [
+                  {
+                    name: "show",
+                    rawName: "v-show",
+                    value: _vm.isShowCommentBox,
+                    expression: "isShowCommentBox"
+                  }
+                ],
+                ref: "commentBox",
                 attrs: {
                   "post-id": _vm.postId,
                   parent: _vm.comment.parent_comment_id || _vm.comment.id,
-                  "last-sub-comment-id":
-                    _vm.comment.comments.length > 0
-                      ? _vm.comment.comments[0].id
-                      : ""
-                }
+                  "last-sub-comment-id": _vm.last_comment
+                },
+                on: { onReceiveComments: _vm.onReceiveComments }
               })
             : _vm._e()
         ],
@@ -55655,15 +55827,6 @@ var staticRenderFns = [
       _c("i", { staticClass: "far fa-thumbs-up" }),
       _vm._v(" Thích\n        ")
     ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("span", { staticClass: "action-links__reply" }, [
-      _c("i", { staticClass: "fas fa-reply" }),
-      _vm._v(" Trả lời\n        ")
-    ])
   }
 ]
 render._withStripped = true
@@ -55690,7 +55853,13 @@ var render = function() {
   return _c(
     "div",
     [
-      _c("comment-box", { attrs: { "post-id": _vm.postId } }),
+      _c("comment-box", {
+        attrs: {
+          "post-id": _vm.postId,
+          "last-sub-comment-id": _vm.last_comment
+        },
+        on: { onReceiveComments: _vm.onReceiveComments }
+      }),
       _vm._v(" "),
       _vm._l(_vm.comments, function(item, index) {
         return _c("comment-item", {
@@ -68011,14 +68180,15 @@ if (token) {
 /*!******************************************************************!*\
   !*** ./resources/js/components/comments/CommentBoxComponent.vue ***!
   \******************************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _CommentBoxComponent_vue_vue_type_template_id_b9db44fe___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CommentBoxComponent.vue?vue&type=template&id=b9db44fe& */ "./resources/js/components/comments/CommentBoxComponent.vue?vue&type=template&id=b9db44fe&");
 /* harmony import */ var _CommentBoxComponent_vue_vue_type_script_lang_ts___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CommentBoxComponent.vue?vue&type=script&lang=ts& */ "./resources/js/components/comments/CommentBoxComponent.vue?vue&type=script&lang=ts&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _CommentBoxComponent_vue_vue_type_script_lang_ts___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _CommentBoxComponent_vue_vue_type_script_lang_ts___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -68048,7 +68218,7 @@ component.options.__file = "resources/js/components/comments/CommentBoxComponent
 /*!*******************************************************************************************!*\
   !*** ./resources/js/components/comments/CommentBoxComponent.vue?vue&type=script&lang=ts& ***!
   \*******************************************************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

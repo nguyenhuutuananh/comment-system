@@ -6,6 +6,7 @@
       v-model="message"
       placeholder="Add a comment"
       type="text"
+      ref="commentInput"
     >
     <div class="input-group-append">
       <span @click="comment" class="input-group-text">
@@ -27,7 +28,7 @@ export default Vue.extend({
       type: Number
     },
     lastSubCommentId: {
-      type: Number
+      type: Number,
     }
   },
   data() {
@@ -36,10 +37,13 @@ export default Vue.extend({
     };
   },
   methods: {
+    focusInput() {
+      console.log(this.$refs.commentInput);
+      setTimeout(_ => this.$refs.commentInput.focus());
+    },
     comment: _.debounce(function(event) {
-      console.log(event);
       if (this.message.trim() === "") return;
-      let params: any = {
+      let params = {
         content: this.message,
         parent_comment_id: this.parent,
         post_id: this.postId
@@ -47,15 +51,14 @@ export default Vue.extend({
       if (this.lastSubCommentId) {
         params.last_seen_comment_id = this.lastSubCommentId;
       }
-      // axios
-      //   .post("/comments", params)
-      //   .then(resp => {
-      //     console.log(resp);
-      //     this.comments.push(resp.data);
-      //   })
-      //   .finally(() => {
-      //     this.message = "";
-      //   });
+      axios
+        .post("/comments", params)
+        .then(resp => {
+          this.$emit('onReceiveComments', resp);
+        })
+        .finally(() => {
+          this.message = "";
+        });
     }, 500)
   }
 });
